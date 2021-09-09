@@ -40,6 +40,7 @@ type Order struct {
 	ID            int       `json:"id"`
 	WidgetId      int       `json:"widget_id"`
 	TransactionID int       `json:"transaction_id"`
+	CustomerID    int       `json:"custumer_id"`
 	StatusID      int       `json:"status_id"`
 	Quantity      int       `json:"quantity"`
 	Amount        int       `json:"amount"`
@@ -77,6 +78,17 @@ type Transaction struct {
 
 // User is the type for users
 type User struct {
+	ID        int       `json:"id"`
+	FirstName string    `json:"first_name"`
+	LastName  string    `json:"last_name"`
+	Email     string    `json:"email"`
+	Password  string    `json:"password"`
+	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
+}
+
+// Customer is the type for customers
+type Customer struct {
 	ID        int       `json:"id"`
 	FirstName string    `json:"first_name"`
 	LastName  string    `json:"last_name"`
@@ -163,6 +175,35 @@ func (m *DBModel) InsertOrder(order Order) (int, error) {
 		order.StatusID,
 		order.Quantity,
 		order.Amount,
+	)
+
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
+}
+
+// InsertOrder insertes a new order, and returns its id
+func (m *DBModel) InsertCustomer(customer Customer) (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `
+		INSERT INTO orders
+			(first_name, last_name, email)
+		VALUES(?, ?, ?)
+	`
+
+	result, err := m.DB.ExecContext(ctx, stmt,
+		customer.FirstName,
+		customer.LastName,
+		customer.Email,
 	)
 
 	if err != nil {
