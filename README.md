@@ -11,3 +11,7 @@ This is a example project for a e-ccomerce
 - [mysql-driver](https://github.com/go-sql-driver/mysql) - Driver Connection Database MariaDB or MySQL
 - [Stripe](https://github.com/stripe/stripe-go) - Payment Provider
 - [scs](https://github.com/alexedwards/scs) - Session Manager
+
+## Run Project
+- Create file Makefile root project and paste example for OS
+- run make start started projecta and make stop stoped the project
