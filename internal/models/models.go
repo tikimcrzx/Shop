@@ -72,6 +72,8 @@ type Transaction struct {
 	LastFour            string    `json:"last_four"`
 	BankReturnCode      string    `json:"bank_return_code"`
 	TransactionStatusID int       `json:"transaction_status_id"`
+	ExpiryMonth         int       `json:"expiry_month"`
+	ExpiryYear          int       `json:"expiry_year"`
 	CreatedAt           time.Time `json:"-"`
 	UpdatedAt           time.Time `json:"-"`
 }
@@ -134,8 +136,8 @@ func (m *DBModel) InsertTransaction(txn Transaction) (int, error) {
 
 	stmt := `
 		INSERT INTO transactions
-			(amount, currency, last_four, bank_return_code, transaction_status_id)
-		VALUES(?, ?, ?, ?, ?)
+			(amount, currency, last_four, bank_return_code, transaction_status_id, expire_month, expire_year)
+		VALUES(?, ?, ?, ?, ?, ?, ?)
 	`
 
 	result, err := m.DB.ExecContext(ctx, stmt,
@@ -144,6 +146,8 @@ func (m *DBModel) InsertTransaction(txn Transaction) (int, error) {
 		txn.LastFour,
 		txn.BankReturnCode,
 		txn.TransactionStatusID,
+		txn.ExpiryMonth,
+		txn.ExpiryYear,
 	)
 
 	if err != nil {
@@ -165,13 +169,14 @@ func (m *DBModel) InsertOrder(order Order) (int, error) {
 
 	stmt := `
 		INSERT INTO orders
-			(widget_id, transaction_id, status_id, quantity, amount)
-		VALUES(?, ?, ?, ?, ?)
+			(widget_id, transaction_id, customer_id, status_id, quantity, amount)
+		VALUES(?, ?, ?, ?, ?, ?)
 	`
 
 	result, err := m.DB.ExecContext(ctx, stmt,
 		order.WidgetId,
 		order.TransactionID,
+		order.CustomerID,
 		order.StatusID,
 		order.Quantity,
 		order.Amount,
@@ -195,7 +200,7 @@ func (m *DBModel) InsertCustomer(customer Customer) (int, error) {
 	defer cancel()
 
 	stmt := `
-		INSERT INTO orders
+		INSERT INTO customers
 			(first_name, last_name, email)
 		VALUES(?, ?, ?)
 	`
