@@ -2,6 +2,9 @@
 
 This is a example project for a e-ccomerce
 
+## Tools
+- [Make](https://www.gnu.org/software/make/manual/) use run project and manager envirotments variables sets keys and more
+
 ## Dependencies
 - [go-chi](https://github.com/go-chi/chi) - Router package
 - [go-chi-cors](https://github.com/go-chi/cors) - Cors Configuration
