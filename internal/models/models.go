@@ -72,6 +72,8 @@ type Transaction struct {
 	LastFour            string    `json:"last_four"`
 	BankReturnCode      string    `json:"bank_return_code"`
 	TransactionStatusID int       `json:"transaction_status_id"`
+	PaymentIntent       string    `json:"payment_intent"`
+	PaymentMethod       string    `json:"payment_method"`
 	ExpiryMonth         int       `json:"expiry_month"`
 	ExpiryYear          int       `json:"expiry_year"`
 	CreatedAt           time.Time `json:"-"`
@@ -136,8 +138,9 @@ func (m *DBModel) InsertTransaction(txn Transaction) (int, error) {
 
 	stmt := `
 		INSERT INTO transactions
-			(amount, currency, last_four, bank_return_code, transaction_status_id, expire_month, expire_year)
-		VALUES(?, ?, ?, ?, ?, ?, ?)
+			(amount, currency, last_four, bank_return_code, transaction_status_id, 
+				payment_intent, payment_method, expire_month, expire_year)
+		VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
 	result, err := m.DB.ExecContext(ctx, stmt,
@@ -146,6 +149,8 @@ func (m *DBModel) InsertTransaction(txn Transaction) (int, error) {
 		txn.LastFour,
 		txn.BankReturnCode,
 		txn.TransactionStatusID,
+		txn.PaymentIntent,
+		txn.PaymentMethod,
 		txn.ExpiryMonth,
 		txn.ExpiryYear,
 	)
